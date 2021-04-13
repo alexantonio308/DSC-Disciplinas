@@ -1,2 +1,3 @@
-# DSC-CRUD
-Crud simples na disciplina de DSC
+# DSC-Disciplinas
+Crud com Rotas e retorno de requisicoes
+Lab1 - 
