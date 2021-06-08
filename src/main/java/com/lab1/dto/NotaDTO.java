@@ -3,10 +3,8 @@ package com.lab1.dto;
 import lombok.Data;
 
 @Data
-public class DisciplinaDTO {
+public class NotaDTO {
 
-    private String nome;
     private double nota;
-    private int likes;
 
 }
