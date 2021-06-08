@@ -56,7 +56,7 @@ public class DisciplinaControler {
 		if(disciplina.isPresent())	
 			return new ResponseEntity<Disciplina>(service.adicionarNota(id, notaDto), HttpStatus.OK);
 		return new ResponseEntity<Disciplina>(HttpStatus.NOT_FOUND);
-
+	}
 
 //
 

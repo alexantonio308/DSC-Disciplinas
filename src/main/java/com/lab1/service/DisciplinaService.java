@@ -68,11 +68,23 @@ public class DisciplinaService {
 		throw new HttpClientErrorException(HttpStatus.NOT_FOUND); 
     }
 	public Disciplina adicionarNota(Long id, NotaDTO notaDto) {
-		Disciplina disciplina = this.repositoryDisciplina.findById(id).get();
-		disciplina.setNota(notaDto.getNota());
-		disciplina.addNota(repositoryNota.save(new Nota(notaDto.getNota(), disciplina)));
-		repositoryDisciplina.save(disciplina);
-		return disciplina;
+		if(this.repositoryDisciplina.existsById(id)) {
+			Disciplina disciplina = this.repositoryDisciplina.findById(id).get();
+			if(disciplina.getNotas().isEmpty()) {
+				disciplina.setNota(notaDto.getNota());
+				disciplina.addNota(repositoryNota.save(new Nota(notaDto.getNota(), disciplina)));
+				repositoryDisciplina.save(disciplina);
+				return disciplina;
+			}
+			Nota ultima = disciplina.getNotas().get(disciplina.getNotas().size() - 1);
+			double media = (ultima.getNota() + notaDto.getNota()) / 2;
+			disciplina.setNota(media);
+			disciplina.addNota(repositoryNota.save(new Nota(notaDto.getNota(), disciplina)));
+			repositoryDisciplina.save(disciplina);
+			return disciplina;
+		}
+		System.out.println("Disciplina " + id + " não foi encontrada!");
+		throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
 	}
 //
 //    public Disciplina removeDisciplina(int id){
