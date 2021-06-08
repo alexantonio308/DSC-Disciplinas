@@ -25,6 +25,9 @@ public class Disciplina {
 	@OneToMany(mappedBy = "disciplina")
 	private List<Nota> notas;
 	
+	@OneToMany(mappedBy = "disciplina")
+	private List<Comentario> comentarios;
+	
 	public Disciplina(String nome, double nota, int likes) {
 		super();
 		this.nome = nome;
@@ -92,7 +95,13 @@ public class Disciplina {
 	public long getId() {
 		return id;
 	}
-    
+	public List<Comentario> getComentarios() {
+		return comentarios;
+	}
+	
+	public void addComentario(Comentario comentario) {
+		this.comentarios.add(comentario);
+	}
     
 
 }

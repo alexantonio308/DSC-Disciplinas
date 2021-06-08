@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
+import com.lab1.dto.ComentarioDTO;
 import com.lab1.dto.DisciplinaDTO;
 import com.lab1.dto.NotaDTO;
 import com.lab1.entity.Disciplina;
@@ -57,37 +58,22 @@ public class DisciplinaControler {
 			return new ResponseEntity<Disciplina>(service.adicionarNota(id, notaDto), HttpStatus.OK);
 		return new ResponseEntity<Disciplina>(HttpStatus.NOT_FOUND);
 	}
-
-//
-
-//
-//    @DeleteMapping("/{id}")
-//    @ResponseStatus(HttpStatus.NO_CONTENT)
-//    private Disciplina deleteDisciplina (@PathVariable int id){
-//        return service.removeDisciplina(id);
-//    }
-//
-//
-//    @PutMapping("/{id}/{nome}")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    private Disciplina putNome(@PathVariable int id, @PathVariable String nome){
-//        return service.mudarNome(id, nome);
-//    }
-//
-//    @PutMapping("/{id}/nota")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    private Disciplina putNota (int id, double nota) {
-//        return service.mudarNota(id, nota);
-//    }
-//
-//    @GetMapping("/ranking")
-//    @ResponseStatus(HttpStatus.OK)
-//    private List<Disciplina> getRanking(){
-//        return service.retornaRanking();
-//    }
-//
-//
-//
+	@PostMapping("/disciplinas/comentario/{id}")
+	public ResponseEntity<Disciplina> adicionarComentario(@PathVariable Long id, @RequestBody ComentarioDTO comentarioDto){
+		try {
+			return new ResponseEntity<Disciplina>(service.adicionarComentario(id, comentarioDto), HttpStatus.OK);
+		}catch(HttpClientErrorException e) {
+			throw new HttpClientErrorException(HttpStatus.NOT_FOUND); 
+		}
+	}
+    @GetMapping("/ranking/likes")
+    public ResponseEntity<List<Disciplina>> getRankingLikesDesc() {
+        return new ResponseEntity<>(service.getRankingLikesDesc(), HttpStatus.OK);
+    }
+    @GetMapping("/ranking/notas")
+    public ResponseEntity<List<Disciplina>> getRankingNotesDesc() {
+        return new ResponseEntity<>(service.getRankingNotesDesc(), HttpStatus.OK);
+    }
 
 
 }

@@ -8,16 +8,20 @@ import java.util.Optional;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lab1.dao.ComentarioDAO;
 import com.lab1.dao.DisciplinaDAO;
 import com.lab1.dao.NotaDAO;
+import com.lab1.dto.ComentarioDTO;
 import com.lab1.dto.DisciplinaDTO;
 import com.lab1.dto.NotaDTO;
+import com.lab1.entity.Comentario;
 import com.lab1.entity.Disciplina;
 import com.lab1.entity.Nota;
 
@@ -29,6 +33,9 @@ public class DisciplinaService {
 	
 	@Autowired
 	private NotaDAO repositoryNota;	
+	
+	@Autowired
+	private ComentarioDAO repositoryComentario;	
 	
     public Disciplina criarDisciplina(DisciplinaDTO disciplina){
         Disciplina disciplina1 = new Disciplina(disciplina.getNome(), disciplina.getNota(), disciplina.getLikes());
@@ -86,43 +93,23 @@ public class DisciplinaService {
 		System.out.println("Disciplina " + id + " não foi encontrada!");
 		throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
 	}
-//
-//    public Disciplina removeDisciplina(int id){
-//        for(Disciplina disciplinaExcluida: this.disciplinas){
-//            if (disciplinaExcluida.getId() == id){
-//                this.disciplinas.remove(disciplinaExcluida);
-//            }
-//        }
-//        return null;
-//    }
-//
-//    public List<Disciplina> retornaRanking() {
-//        List<Disciplina> disciplinasRanking = this.disciplinas;
-//        disciplinasRanking.sort((d1,d2) -> Double.compare(d1.getNota(),d2.getNota()));
-//
-//        return disciplinasRanking;
-//    }
-//
-//    public Disciplina mudarNome (int id, String name) {
-//        for (Disciplina disciplinaNome : this.disciplinas) {
-//            if (disciplinaNome.getId() == id) {
-//                disciplinaNome.setNome(name);
-//
-//                return disciplinaNome;
-//            }
-//        }
-//        return null;
-//    }
-//
-//    public Disciplina mudarNota (int id, Double nota){
-//        for(Disciplina disciplinaNota: this.disciplinas){
-//            if (disciplinaNota.getId() == id){
-//                disciplinaNota.setNota(nota);
-//
-//                return disciplinaNota;
-//            }
-//        }
-//        return null;
-//    }
+	public Disciplina adicionarComentario(Long id, ComentarioDTO comentarioDto) {
+		if(this.repositoryDisciplina.existsById(id)) {
+			Disciplina disciplina = this.repositoryDisciplina.findById(id).get();
+			
+			disciplina.addComentario(repositoryComentario.save(new Comentario(comentarioDto.getComentario(), disciplina)));
+			return this.repositoryDisciplina.save(disciplina);
+		}
+		System.out.println("Disciplina " + id + " foi encontrada!");
+		throw new HttpClientErrorException(HttpStatus.NOT_FOUND); 
+	}
+	
+    public List<Disciplina> getRankingNotesDesc() {
+        return this.repositoryDisciplina.findByOrderByNotaDesc();
+    }
+
+    public List<Disciplina> getRankingLikesDesc() {
+        return repositoryDisciplina.findAll(Sort.by(Sort.Direction.DESC, "likes"));
+    }
 
 }
